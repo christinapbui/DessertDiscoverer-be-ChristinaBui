@@ -1,4 +1,5 @@
 const mongoose = require("mongoose")
+const Dessert = require("./dessert")
 
 const reviewSchema = new mongoose.Schema({
     reviewofDessert: {
@@ -36,3 +37,29 @@ const reviewSchema = new mongoose.Schema({
     toJSON: { virtuals: true },
     toObject: { virtuals: true }
 })
+
+//calculate average & number of ratings
+reviewSchema.statics.calculateAverage = async function(did){
+    const stats = await this.aggregate([
+        {
+            $match: { dessert: did }
+        },
+        {
+            $group: {
+                _id: "$dessert",
+                // number of ratings & average ratings
+                numRating: { $sum: 1 },
+                avgRating: { $avg: "$rating" }
+            }
+        }
+    ])
+    await Dessert.findByIdAndUpdate(did, {
+        numRating: stats.length > 0 ? stats[0].numRating: 0,
+        avgRating: stats.length > 0 ? stats[0].avgRating: 0
+    })
+    console.log(stats)
+}
+
+const Review = mongoose.model("Review", reviewSchema)
+
+module.exports = Review;
