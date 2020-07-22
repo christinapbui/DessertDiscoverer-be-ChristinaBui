@@ -10,11 +10,12 @@ const useragent = require("useragent");
 const requestIp = require("request-ip");
 
 const utilHelper = require("../helpers/util.helper");
-const { secretOrKey } = require("../config/keys");
+// const { secretOrKey } = require("../config/keys");
 const authMiddleware = {};
 
 authMiddleware.authentication = async (req, res, next) => {
 	try {
+		const secretOrKey = "234523452345"
 		let token =
 			req.body.token ||
 			req.query.token ||

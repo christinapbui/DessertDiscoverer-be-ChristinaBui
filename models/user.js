@@ -65,6 +65,38 @@ userSchema.methods.generateToken = async function () {
 	return token; // return this to attach it the response in authController
 };
 
+userSchema.statics.loginWithEmail = async function (email, password) {
+	const user = await this.findOne({ email: email });
+	console.log("this is the user", user);
+	if (!user) return null;
+
+	const match = await bcrypt.compare(password, user.password);
+	console.log("match password here", match);
+	if (match) {
+		return user;
+	}
+	return null;
+};
+
+userSchema.pre("save", async function (next) {
+	if (this.isModified("password")) {
+		console.log(this.password, typeof this.password);
+		this.password = await bcrypt.hash(this.password, round);
+	}
+	next();
+});
+
+userSchema.statics.findOneOrCreate = async function ({ email, name }) {
+	let user = await this.findOne({ email });
+	if (!user) {
+		user = await this.create({
+			email: email,
+			displayName: name,
+		});
+	}
+	return user;
+};
+
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;

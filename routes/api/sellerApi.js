@@ -5,17 +5,15 @@ const { loginRequired } = require("../../middleware/auth")
 
 router.route("/")
 .get(getSellerList)
-.post(createUser);
-
-router
-.get("/logout", loginRequired, logout)
+.get(loginRequired, getMyProfile)
+.put(loginRequired, changeInfo)
 
 router.route("/login")
 .post(loginWithEmail)
 
-router.route("/me")
-.get(loginRequired, getMyProfile)
-.put(loginRequired, changeInfo)
+// router.route("/me")
+// .get(loginRequired, getMyProfile)
+// .put(loginRequired, changeInfo)
 
 
 module.exports = router;
