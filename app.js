@@ -10,7 +10,7 @@ var routes = require("./routes");
 
 var app = express();
 mongoose
-	.connect("mongodb://localhost/w11-final-project", {
+	.connect(process.env.DB_LOCAL, {
 		useCreateIndex: true,
 		useNewUrlParser: true,
 		useFindAndModify: false,
