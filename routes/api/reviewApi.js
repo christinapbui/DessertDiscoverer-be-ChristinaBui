@@ -8,16 +8,12 @@ var {
 	deleteReview,
 } = require("../../controllers/reviewController");
 var { loginRequired } = require("../../middleware/auth");
+const reviewRoutes = require("./reviewApi");
 
-router.route("/").get(getAllReviews);
-
-router
-	.route("/add")
-	// .post(loginRequired, createDessert);
-	.post(loginRequired, createReview);
+router.route("/").get(getAllReviews).post(loginRequired, createReview);
 
 router
-	.route("/:id")
+	.route("/:rid")
 	.get(getSingleReview)
 	.patch(loginRequired, updateReview)
 	.delete(loginRequired, deleteReview);

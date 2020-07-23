@@ -1,5 +1,6 @@
 const Dessert = require("../models/dessert");
 const Tag = require("../models/tag");
+const Review = require("../models/review");
 
 const getAllDesserts = async (req, res) => {
 	const page = parseInt(req.query.page) || 1; // .page is the param
@@ -84,10 +85,13 @@ const updateDessert = async (req, res) => {
 const getSingleDessert = async (req, res) => {
 	const singleDessert = await Dessert.findById(req.params.id)
 		.populate("tags")
-		.populate("seller", "-email")
-		// .populate("reviews")
-		.populate({ path: "reviews", options: { limit: 5, sort: "-rating" } });
-	res.send(singleDessert);
+		.populate("seller", "-email");
+	// .populate("reviews")
+	const reviews = await Review.find({ reviewOfDessert: req.params.id })
+		.populate("user")
+		.limit(5)
+		.sort("-rating");
+	res.send({ singleDessert: singleDessert, reviews: reviews });
 };
 
 const deleteDessert = async (req, res) => {
