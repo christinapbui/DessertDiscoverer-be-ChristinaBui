@@ -30,20 +30,6 @@ exports.loginWithEmail = catchAsync(async (req, res, next) => {
 			status: "fail",
 			error: "Wrong email or password",
 		});
-		// } else {
-		// 	const isMatch = await bcrypt.compare(password, user.password);
-		// 	if (isMatch) {
-		// 	  const { token, payload } = await userController.validLoginResponse(
-		// 		req,
-		// 		user,
-		// 		next
-		// 	  );
-		// 	  return res.status(200).json({
-		// 		  status: "ok",
-		// 		  data: token, payload // FINISH/DOUBLE CHECK
-		// 	  })
-		// } else {
-		// 	errors.password // FINISH
 	}
 
 	const token = await user.generateToken(); // if calling through instance, don't need to pass argument
@@ -59,7 +45,7 @@ exports.loginWithEmail = catchAsync(async (req, res, next) => {
 exports.getSellerList = async (req, res, next) => {
 	try {
 		const sellerList = await User.find({
-			userRole: "seller",
+			// userRole: "seller",
 		}); // need to add "seller" to object to only return sellers (probably)
 
 		res.status(200).json({
@@ -112,6 +98,22 @@ exports.createUser = async (req, res, next) => {
 			error: err.message,
 		});
 	}
+};
+
+exports.getSingleUser = async (req, res) => {
+	const singleUser = await User.findById(req.params.id).populate(
+		"seller",
+		"-email"
+	);
+	// .populate("reviews")
+	// const reviews = await Review.find({ reviewOfDessert: req.params.id })
+	// 	.populate("user")
+	// 	.limit(5)
+	// 	.sort("-rating");
+	res.send({
+		singleUser: singleUser,
+		// reviews: reviews
+	});
 };
 
 exports.changeInfo = async (req, res, next) => {
